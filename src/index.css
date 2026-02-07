@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 199 89% 60%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 199 89% 60%;
+
+    --radius: 0.5rem;
+
+    --font-sans: "Geist", "Inter", sans-serif;
+    --font-mono: "Geist Mono", "JetBrains Mono", monospace;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+.dro-value {
+  @apply font-mono text-4xl font-bold tracking-tight text-primary;
+}
+
+.jog-button {
+  @apply h-14 w-14 rounded-md border border-border bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all active:scale-95;
+}
+
+.terminal-line {
+  @apply font-mono text-sm leading-relaxed;
+}
+
+.terminal-in {
+  @apply text-sky-400;
+}
+
+.terminal-out {
+  @apply text-emerald-400;
+}
+
+.terminal-err {
+  @apply text-red-400;
+}
