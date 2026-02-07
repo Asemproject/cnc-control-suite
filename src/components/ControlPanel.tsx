@@ -16,6 +16,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
 import { SerialHook } from '@/hooks/useSerial';
 
 interface ControlPanelProps {
@@ -57,9 +64,40 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
             <Button variant="outline" size="sm" className="flex-1 h-12 font-bold text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-all" onClick={() => serial.sendCommand('G10 L20 P1 X0 Y0 Z0')}>
               ZERO ALL
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 h-12 font-bold text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-all" onClick={homing}>
-              <Home className="h-4 w-4 mr-2" /> HOME
-            </Button>
+            
+            <div className="flex flex-1 gap-[1px]">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 h-12 font-bold text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-all rounded-r-none border-r-0" 
+                onClick={() => serial.sendCommand('$H')}
+              >
+                <Home className="h-4 w-4 mr-2" /> HOME
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-12 px-2 hover:bg-primary/10 hover:text-primary transition-all rounded-l-none">
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-secondary/95 backdrop-blur-xl border-border/50">
+                  <DropdownMenuItem className="text-[10px] font-bold tracking-widest uppercase py-3 cursor-pointer" onClick={() => serial.sendCommand('$H')}>
+                    <Home className="h-3 w-3 mr-2" /> Home All ($H)
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-border/50" />
+                  <DropdownMenuItem className="text-[10px] font-bold tracking-widest uppercase py-3 cursor-pointer" onClick={() => serial.sendCommand('$HX')}>
+                    Home X ($HX)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-[10px] font-bold tracking-widest uppercase py-3 cursor-pointer" onClick={() => serial.sendCommand('$HY')}>
+                    Home Y ($HY)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-[10px] font-bold tracking-widest uppercase py-3 cursor-pointer" onClick={() => serial.sendCommand('$HZ')}>
+                    Home Z ($HZ)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             <Button variant="outline" size="sm" className="h-12 px-4 hover:bg-destructive/10 hover:text-destructive transition-all" onClick={unlock}>
               <Zap className="h-4 w-4" />
             </Button>
@@ -122,21 +160,63 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
 
       {/* Spindle & Feed */}
       <Card className="border-border/50 bg-secondary/10 backdrop-blur-md">
-        <CardContent className="p-6 grid grid-cols-2 gap-6">
-           <div className="space-y-2">
+        <CardContent className="p-6 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
               <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em]">Feedrate</span>
               <div className="flex items-baseline gap-2">
-                 <p className="text-2xl font-mono font-black text-emerald-400 tracking-tighter">{serial.feedrate}</p>
-                 <span className="text-[10px] font-bold text-muted-foreground/30">MM/M</span>
+                <p className="text-2xl font-mono font-black text-emerald-400 tracking-tighter">{serial.feedrate}</p>
+                <span className="text-[10px] font-bold text-muted-foreground/30">MM/M</span>
               </div>
-           </div>
-           <div className="space-y-2">
+            </div>
+            <div className="space-y-2">
               <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em]">Spindle</span>
               <div className="flex items-baseline gap-2">
-                 <p className="text-2xl font-mono font-black text-sky-400 tracking-tighter">{serial.spindle}</p>
-                 <span className="text-[10px] font-bold text-muted-foreground/30">RPM</span>
+                <p className="text-2xl font-mono font-black text-sky-400 tracking-tighter">{serial.spindle}</p>
+                <span className="text-[10px] font-bold text-muted-foreground/30">RPM</span>
               </div>
-           </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2 border-t border-border/20">
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="flex-1 h-10 text-[10px] font-bold tracking-widest uppercase hover:bg-sky-500/10 hover:text-sky-500 transition-all"
+                onClick={() => serial.sendCommand('M3 S1000')}
+              >
+                CW (M3)
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1 h-10 text-[10px] font-bold tracking-widest uppercase hover:bg-sky-500/10 hover:text-sky-500 transition-all"
+                onClick={() => serial.sendCommand('M4 S1000')}
+              >
+                CCW (M4)
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="flex-1 h-10 text-[10px] font-bold tracking-widest uppercase"
+                onClick={() => serial.sendCommand('M5')}
+              >
+                STOP (M5)
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-4 bg-background/50 p-2 rounded-lg border border-border/50">
+              <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest whitespace-nowrap">Speed S</span>
+              <Input 
+                type="number" 
+                placeholder="1000"
+                className="h-8 bg-transparent border-none text-right font-mono text-sm focus-visible:ring-0"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    serial.sendCommand(`S${(e.target as HTMLInputElement).value}`);
+                  }
+                }}
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -181,7 +181,7 @@ export const ImageTool: React.FC<ImageToolProps> = ({ onGenerated }) => {
             <CardHeader className="bg-secondary/20 py-3 border-b border-border/50">
                <CardTitle className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Processing Canvas</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 flex items-center justify-center p-6 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat opacity-50">
+            <CardContent className="flex-1 flex items-center justify-center p-6 bg-[url('/noise.svg')] bg-repeat opacity-50">
                <canvas ref={canvasRef} className="max-w-full max-h-full border border-border shadow-2xl rounded" />
                {!image && (
                  <div className="flex flex-col items-center justify-center opacity-20 grayscale scale-150">
