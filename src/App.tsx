@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Monitor,
   Move,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Target
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -28,11 +29,14 @@ import { Terminal } from './components/Terminal';
 import { FileExplorer } from './components/FileExplorer';
 import { MachineSettings } from './components/MachineSettings';
 import { ImageTool } from './components/ImageTool';
-import { useSerial } from './hooks/useSerial';
+import { JogProbe } from './components/JogProbe';
+import { ConnectionDialog } from './components/ConnectionDialog';
+import { useSerial, ConnectionType } from './hooks/useSerial';
 
 const App: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useBlinkAuth();
   const [activeTab, setActiveTab] = useState('control');
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
   const serial = useSerial();
 
   if (isLoading) {
@@ -99,6 +103,12 @@ const App: React.FC = () => {
             onClick={() => setActiveTab('control')} 
           />
           <SidebarItem 
+            icon={<Target className="h-4 w-4" />} 
+            label="Jog & Probe" 
+            active={activeTab === 'probe'} 
+            onClick={() => setActiveTab('probe')} 
+          />
+          <SidebarItem 
             icon={<FileText className="h-4 w-4" />} 
             label="G-code Files" 
             active={activeTab === 'files'} 
@@ -127,15 +137,19 @@ const App: React.FC = () => {
         <div className="p-4 border-t border-border space-y-4">
           <div className="bg-secondary/50 rounded-xl p-4 space-y-3 border border-border/50">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">MACHINE</span>
-              <Badge variant={serial.isConnected ? "default" : "secondary"} className="h-5">
-                {serial.isConnected ? "CONNECTED" : "OFFLINE"}
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest text-[10px]">Machine</span>
+              <Badge variant={serial.isConnected ? "default" : "secondary"} className="h-5 uppercase tracking-widest text-[8px]">
+                {serial.isConnected ? (serial.connectionType || 'CONNECTED') : "OFFLINE"}
               </Badge>
             </div>
             {!serial.isConnected ? (
-              <Button size="sm" className="w-full h-8" onClick={serial.connect}>Connect Serial</Button>
+              <Button size="sm" className="w-full h-8 font-bold text-[10px] tracking-widest uppercase shadow-lg shadow-primary/10" onClick={() => setIsConnectDialogOpen(true)}>
+                Connect Machine
+              </Button>
             ) : (
-              <Button size="sm" variant="destructive" className="w-full h-8" onClick={serial.disconnect}>Disconnect</Button>
+              <Button size="sm" variant="destructive" className="w-full h-8 font-bold text-[10px] tracking-widest uppercase" onClick={serial.disconnect}>
+                Disconnect
+              </Button>
             )}
           </div>
           
@@ -200,6 +214,9 @@ const App: React.FC = () => {
                 </div>
               </div>
             </TabsContent>
+            <TabsContent value="probe" className="mt-0 data-[state=inactive]:hidden">
+              <JogProbe serial={serial} />
+            </TabsContent>
             <TabsContent value="files" className="mt-0 data-[state=inactive]:hidden">
               <FileExplorer onSelectFile={serial.loadGCode} />
             </TabsContent>
@@ -218,6 +235,12 @@ const App: React.FC = () => {
           </Tabs>
         </div>
       </main>
+
+      <ConnectionDialog 
+        open={isConnectDialogOpen} 
+        onOpenChange={setIsConnectDialogOpen} 
+        onConnect={(type, options) => serial.connect(type, options)} 
+      />
     </div>
   );
 };

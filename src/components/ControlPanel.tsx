@@ -45,22 +45,22 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
   return (
     <div className="space-y-6">
       {/* DRO - Digital Read Out */}
-      <Card className="border-border/50 bg-secondary/5 shadow-xl">
+      <Card className="border-border/50 bg-secondary/10 backdrop-blur-xl shadow-2xl">
         <CardContent className="p-6 space-y-4">
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             <CoordinateRow label="X" value={serial.wpos.x} onZero={() => zeroAxis('X')} />
             <CoordinateRow label="Y" value={serial.wpos.y} onZero={() => zeroAxis('Y')} />
             <CoordinateRow label="Z" value={serial.wpos.z} onZero={() => zeroAxis('Z')} />
           </div>
           
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" size="sm" className="flex-1 h-10 font-bold" onClick={() => serial.sendCommand('G10 L20 P1 X0 Y0 Z0')}>
+          <div className="flex gap-2 pt-4">
+            <Button variant="outline" size="sm" className="flex-1 h-12 font-bold text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-all" onClick={() => serial.sendCommand('G10 L20 P1 X0 Y0 Z0')}>
               ZERO ALL
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 h-10 font-bold" onClick={homing}>
+            <Button variant="outline" size="sm" className="flex-1 h-12 font-bold text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-all" onClick={homing}>
               <Home className="h-4 w-4 mr-2" /> HOME
             </Button>
-            <Button variant="outline" size="sm" className="h-10 px-3" onClick={unlock}>
+            <Button variant="outline" size="sm" className="h-12 px-4 hover:bg-destructive/10 hover:text-destructive transition-all" onClick={unlock}>
               <Zap className="h-4 w-4" />
             </Button>
           </div>
@@ -68,22 +68,22 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
       </Card>
 
       {/* Jog Control */}
-      <Card className="border-border/50 bg-secondary/5 overflow-hidden">
-        <CardHeader className="bg-secondary/20 py-3 border-b border-border/50">
-          <CardTitle className="text-sm font-bold tracking-widest flex items-center gap-2">
-            <Move className="h-4 w-4" /> JOG CONTROL
+      <Card className="border-border/50 bg-secondary/10 overflow-hidden backdrop-blur-md">
+        <CardHeader className="bg-secondary/20 py-4 border-b border-border/50">
+          <CardTitle className="text-[10px] font-bold tracking-[0.2em] flex items-center gap-2 uppercase text-muted-foreground">
+            <Move className="h-4 w-4 text-primary" /> Jog Control
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
-          <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg border border-border/50">
-            <span className="text-[10px] font-bold text-muted-foreground ml-2">STEP (MM)</span>
+        <CardContent className="p-8 space-y-8">
+          <div className="flex justify-between items-center bg-background/50 p-1.5 rounded-xl border border-border/50">
+            <span className="text-[9px] font-bold text-muted-foreground/60 ml-3 tracking-widest uppercase">Step (mm)</span>
             <div className="flex gap-1">
               {['0.1', '1', '10', '50'].map(size => (
                 <Button 
                   key={size} 
                   variant={stepSize === size ? "default" : "ghost"} 
                   size="sm" 
-                  className="h-7 w-10 text-[10px] p-0"
+                  className={`h-8 w-12 text-[10px] font-bold transition-all rounded-lg ${stepSize === size ? 'shadow-lg shadow-primary/20' : ''}`}
                   onClick={() => setStepSize(size)}
                 >
                   {size}
@@ -92,41 +92,50 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 place-items-center">
+          <div className="grid grid-cols-3 gap-6 place-items-center relative">
              <div />
-             <Button variant="secondary" className="jog-button" onClick={() => jog('Y', 1)}><ArrowUp className="h-6 w-6" /></Button>
-             <Button variant="secondary" className="jog-button" onClick={() => jog('Z', 1)}><ChevronUp className="h-6 w-6" /></Button>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('Y', 1)}><ArrowUp className="h-7 w-7" /></Button>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('Z', 1)}><ChevronUp className="h-7 w-7 text-sky-400" /></Button>
 
-             <Button variant="secondary" className="jog-button" onClick={() => jog('X', -1)}><ArrowLeft className="h-6 w-6" /></Button>
-             <div className="h-14 w-14 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary/40 font-bold text-xs bg-primary/5">JOG</div>
-             <Button variant="secondary" className="jog-button" onClick={() => jog('X', 1)}><ArrowRight className="h-6 w-6" /></Button>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('X', -1)}><ArrowLeft className="h-7 w-7" /></Button>
+             <div className="h-16 w-16 rounded-full border-2 border-primary/20 flex flex-col items-center justify-center text-primary/60 font-black text-[10px] bg-primary/5 tracking-widest shadow-inner group transition-all hover:border-primary/40">
+                <div className="h-2 w-2 rounded-full bg-primary mb-1 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.5)]" />
+                AXIS
+             </div>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('X', 1)}><ArrowRight className="h-7 w-7" /></Button>
 
              <div />
-             <Button variant="secondary" className="jog-button" onClick={() => jog('Y', -1)}><ArrowDown className="h-6 w-6" /></Button>
-             <Button variant="secondary" className="jog-button" onClick={() => jog('Z', -1)}><ChevronDown className="h-6 w-6" /></Button>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('Y', -1)}><ArrowDown className="h-7 w-7" /></Button>
+             <Button variant="secondary" className="jog-button" onClick={() => jog('Z', -1)}><ChevronDown className="h-7 w-7 text-sky-400" /></Button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-             <Button variant="outline" className="h-10 font-bold border-dashed hover:border-primary hover:bg-primary/5" onClick={() => serial.sendCommand('G38.2 Z-20 F100')}>
-               <Target className="h-4 w-4 mr-2" /> PROBE Z
+          <div className="grid grid-cols-2 gap-4 pt-2">
+             <Button variant="outline" className="h-12 font-bold text-[10px] tracking-widest uppercase border-dashed border-primary/30 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all">
+               <Target className="h-4 w-4 mr-2" /> Probe Z
              </Button>
-             <Button variant="outline" className="h-10 font-bold border-dashed hover:border-primary hover:bg-primary/5">
-               <Crosshair className="h-4 w-4 mr-2" /> CENTER
+             <Button variant="outline" className="h-12 font-bold text-[10px] tracking-widest uppercase border-dashed border-sky-500/30 hover:border-sky-500 bg-sky-500/5 hover:bg-sky-500/10 transition-all">
+               <Crosshair className="h-4 w-4 mr-2" /> Center
              </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Spindle & Feed */}
-      <Card className="border-border/50 bg-secondary/5">
-        <CardContent className="p-4 grid grid-cols-2 gap-4">
-           <div className="space-y-1">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Feedrate</span>
-              <p className="text-xl font-mono font-bold text-emerald-400">{serial.feedrate} <span className="text-[10px] text-muted-foreground">MM/M</span></p>
+      <Card className="border-border/50 bg-secondary/10 backdrop-blur-md">
+        <CardContent className="p-6 grid grid-cols-2 gap-6">
+           <div className="space-y-2">
+              <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em]">Feedrate</span>
+              <div className="flex items-baseline gap-2">
+                 <p className="text-2xl font-mono font-black text-emerald-400 tracking-tighter">{serial.feedrate}</p>
+                 <span className="text-[10px] font-bold text-muted-foreground/30">MM/M</span>
+              </div>
            </div>
-           <div className="space-y-1">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Spindle</span>
-              <p className="text-xl font-mono font-bold text-sky-400">{serial.spindle} <span className="text-[10px] text-muted-foreground">RPM</span></p>
+           <div className="space-y-2">
+              <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em]">Spindle</span>
+              <div className="flex items-baseline gap-2">
+                 <p className="text-2xl font-mono font-black text-sky-400 tracking-tighter">{serial.spindle}</p>
+                 <span className="text-[10px] font-bold text-muted-foreground/30">RPM</span>
+              </div>
            </div>
         </CardContent>
       </Card>
@@ -135,20 +144,22 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ serial }) => {
 };
 
 const CoordinateRow: React.FC<{ label: string; value: number; onZero: () => void }> = ({ label, value, onZero }) => (
-  <div className="flex items-center justify-between group">
-    <div className="flex items-baseline gap-4">
-      <span className="text-muted-foreground font-bold w-4">{label}</span>
-      <span className="dro-value min-w-[120px] tabular-nums">
+  <div className="flex items-center justify-between group py-1">
+    <div className="flex items-center gap-6">
+      <div className="h-8 w-8 rounded-lg bg-secondary/50 border border-border/50 flex items-center justify-center font-black text-xs text-muted-foreground/50 group-hover:text-primary transition-colors">
+        {label}
+      </div>
+      <span className="dro-value tabular-nums leading-none">
         {value.toFixed(3)}
       </span>
     </div>
     <Button 
       variant="ghost" 
       size="sm" 
-      className="h-8 px-3 text-[10px] font-bold text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+      className="h-9 px-4 text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-all bg-secondary/50 hover:bg-primary/10 rounded-xl"
       onClick={onZero}
     >
-      ZERO {label}
+      Zero {label}
     </Button>
   </div>
 );
