@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, PerspectiveCamera, GizmoHelper, GizmoViewport } from '@react-three/drei';
 import * as THREE from 'three';
+import { Move3d } from 'lucide-react';
 
 interface GCodeVisualizerProps {
   gcode: string;
